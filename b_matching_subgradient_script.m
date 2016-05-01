@@ -7,20 +7,22 @@
 clc; clear all
 %---------------Parameter---------------------
 %type=1 if mat format, 2 if dat format 3 if csv format
-filetype = 1;
+filetype = 2;
 %graphtype =1 if non bipartite 2 otherwise
-graphtype = 1;
+graphtype = 2;
 %0.5 approx or naive algo for bound.1: 0.5 aprox, 2:naive
 ubtype = 2;
 %do u want to find feasible solution, 1:yes 2:no
 feas_need = 1;
+%save result or not. 1:save, 2:not
+save_res = 1;
 %save iteration or not, 1: save 2: dont
 save_itn = 2;
 %data directory
-data_source = 'Data/Input/';
-files = {'astro-ph','turon_m','Reuters911','cond-mat-2005','gas_sensor'};
+data_source = 'Data/Input/movie_lense/';
+%files = {'astro-ph','turon_m','Reuters911','cond-mat-2005','gas_sensor'};
 %list of the name of the files
-%files = {'toy_graph3'};
+files = {'ratings1m,ratings10m'};
 
 
 % iteration limit to decrease mu
@@ -129,7 +131,9 @@ for f_ii=1:size(files,2)
     end
     
     %storage for each b value the final objective and time 
-    Result = zeros(size(B_set,2),6);
+	if save_res == 1
+		Result = zeros(size(B_set,2),6);
+	end
 
 	%stroring each iteration output and time
     if save_itn == 1
@@ -297,20 +301,23 @@ for f_ii=1:size(files,2)
             feas_time = toc;
         end
         
-        
-        if feas_need == 1
-            Result(b_ii,:)=[B_set(b_ii), -max_g, it_max, subgrad_time,dot(E(:,3),x1),feas_time];
-        else
-            Result(b_ii,:)=[B_set(b_ii), -max_g, it_max, subgrad_time,dot(E(:,3),x1),0];
-        end
+        if save_res == 1
+			if feas_need == 1
+				Result(b_ii,:)=[B_set(b_ii), -max_g, it_max, subgrad_time,dot(E(:,3),x1),feas_time];
+			else
+				Result(b_ii,:)=[B_set(b_ii), -max_g, it_max, subgrad_time,dot(E(:,3),x1),0];
+			end
+		end
     end
     col_header = {'B','obj','iteration','time','feasible'};
-    if(ubtype==1)
-        output_file = strcat(files{f_ii},'_result_subgradient','_ubhalf');
-    else
-        output_file = strcat(files{f_ii},'_result_subgradient','_ubnaive');
-    end
-    xlswrite(output_file,Result);
+	if save_res == 1
+		if(ubtype==1)
+			output_file = strcat(files{f_ii},'_result_subgradient','_ubhalf');
+		else
+			output_file = strcat(files{f_ii},'_result_subgradient','_ubnaive');
+		end
+		xlswrite(output_file,Result);
+	end
     %xlswrite(output_file,col_header,'sheet1','B1');
     if save_itn == 1
         if(ubtype==1)
@@ -323,5 +330,15 @@ for f_ii=1:size(files,2)
     %col_header = {'obj','time','obj','time','obj','time','obj','time'};
     %xlswrite(output_file,col_header,'sheet1','B1');
     Result
-    clearvars -except data_source files f_ii L_it L_max B_set filetype graphtype T ubtype save_itn feas_need 
+    clearvars -except data_source files f_ii L_it L_max B_set filetype graphtype T ubtype save_itn feas_need save_res
 end
+
+
+
+
+
+
+
+
+
+
