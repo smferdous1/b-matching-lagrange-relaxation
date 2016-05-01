@@ -26,10 +26,10 @@ files = {'astro-ph','turon_m','Reuters911','cond-mat-2005','gas_sensor'};
 % iteration limit to decrease mu
 L_it = 40;
 % iteration limit to stop
-L_max = 120;
+L_max = 150;
 % b values
-%B_set=[1,3,5,10];
-B_set = 1;
+B_set=[1,3,5,10];
+%B_set = 1;
 %Max iteration Limit
 T = 5000;
 %-------------------------------------------------------------
@@ -323,15 +323,5 @@ for f_ii=1:size(files,2)
     %col_header = {'obj','time','obj','time','obj','time','obj','time'};
     %xlswrite(output_file,col_header,'sheet1','B1');
     Result
-    %clearvars -except data_source files f_ii L_it L_max B_set filetype graphtype T ubtype
+    clearvars -except data_source files f_ii L_it L_max B_set filetype graphtype T ubtype save_itn feas_need 
 end
-
-
-
-
-
-
-
-
-
-
